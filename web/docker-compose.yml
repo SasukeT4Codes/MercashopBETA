@@ -14,7 +14,7 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
 
   php:
-    image: php:8.2-apache
+    build: ./backend
     container_name: mercashop_php
     restart: always
     volumes:
