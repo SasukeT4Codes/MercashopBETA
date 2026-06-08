@@ -1,5 +1,29 @@
+:root {
+  --color-acento: #e0a800; /* Mostaza */
+  --color-promocion: #dc3545; /* Rojo Bootstrap */
+}
+
 body {
   background-color: #f8f9fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.banner-promocion {
+  background-color: var(--color-promocion);
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.banner-promocion h2 {
+  font-weight: bold;
+}
+
+.banner-promocion .btn {
+  background-color: #fff;
+  color: var(--color-promocion);
+  font-weight: 600;
 }
 
 .producto-card {
