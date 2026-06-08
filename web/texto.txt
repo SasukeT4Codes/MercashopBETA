@@ -12,3 +12,23 @@ Login - Endpoint para autenticación básica de clientes.
 FRONTEND----
 
 JS/app - Toda la logica para agilizar.
+
+ADMIN/login.html - formulario de acceso administrador.
+ADMIN/login.php - valida credenciales contra tabla TUsuarioAdmin.
+ADMIN/index.html - dashboard con enlaces a productos y compras.
+ADMIN/productos.html - listado y formulario CRUD.
+ADMIN/productos.js - llamadas AJAX a admin_productos.php.
+ADMIN/compras.html - muestra pedidos registrados.
+
+
+INSERT INTO TUsuarioAdmin (cNombre, cApellido, cCorreo, cPassword, eEstado)
+VALUES ('Admin', 'Principal', 'admin@mercashop.com', 'copilot1234', 'Activo');
+
+
+Login admin:
+
+http://localhost:8080/admin/login.html
+Aquí ingresas el correo y contraseña del administrador (admin@mercashop.com / copilot1234).
+
+Dashboard (una vez validado):
+http://localhost:8080/admin/index.html
