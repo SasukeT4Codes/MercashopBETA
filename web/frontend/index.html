@@ -1,29 +1,130 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Mercashop - Catálogo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MercaShop – Catálogo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link href="css/style.css" rel="stylesheet"/>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Mercashop</a>
-      <div class="d-flex">
-        <button class="btn btn-outline-light me-2" onclick="mostrarCatalogo()">Catálogo</button>
-        <button class="btn btn-outline-light" onclick="mostrarCarrito()">Carrito</button>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg ms-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand ms-brand" href="index.html">MercaShop</a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <i class="bi bi-list text-white fs-4"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
+        <li class="nav-item"><a class="nav-link text-white active" href="index.html">Catálogo</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-3">
+        <a href="login.html" class="nav-link text-white"><i class="bi bi-person"></i></a>
+        <a href="carrito.html" class="nav-link text-white position-relative">
+          <i class="bi bi-bag"></i>
+          <span class="badge bg-warning text-dark position-absolute top-0 start-100 translate-middle rounded-pill" id="cart-count">0</span>
+        </a>
       </div>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <div class="container mt-4">
-    <div id="contenido" class="row">
-      <!-- Aquí se cargará catálogo o carrito -->
+<!-- HERO -->
+<div class="ms-hero py-5 text-center">
+  <div class="container py-4">
+    <p class="text-uppercase letter-wide small mb-2 text-muted">Nueva colección 2025</p>
+    <h1 class="ms-title display-4 mb-3">Moda que te define</h1>
+    <p class="text-muted lead mb-0">Descubre prendas únicas con envío gratis en tu primer pedido</p>
+  </div>
+</div>
+
+<!-- FILTROS -->
+<div class="bg-white border-bottom py-3 sticky-filters">
+  <div class="container">
+    <div class="row g-2 align-items-center">
+      <div class="col-12 col-md-4">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+          <input type="text" id="search-input" class="form-control border-start-0 ps-0" placeholder="Buscar productos..."/>
+        </div>
+      </div>
+      <div class="col-6 col-md-2">
+        <select id="filter-categoria" class="form-select">
+          <option value="">Categoría</option>
+          <option value="camisetas">Camisetas</option>
+          <option value="pantalones">Pantalones</option>
+          <option value="blusas">Blusas</option>
+          <option value="sudaderas">Sudaderas</option>
+          <option value="accesorios">Accesorios</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <select id="filter-precio" class="form-select">
+          <option value="">Precio</option>
+          <option value="0-30">$0 – $30</option>
+          <option value="30-60">$30 – $60</option>
+          <option value="60-100">$60 – $100</option>
+          <option value="100+">Más de $100</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <select id="filter-orden" class="form-select">
+          <option value="">Ordenar</option>
+          <option value="precio-asc">Precio ↑</option>
+          <option value="precio-desc">Precio ↓</option>
+          <option value="nombre">Nombre A-Z</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <button class="btn btn-outline-secondary w-100" id="btn-limpiar">
+          <i class="bi bi-x-circle me-1"></i>Limpiar
+        </button>
+      </div>
     </div>
   </div>
+</div>
 
-  <script src="js/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- CATÁLOGO -->
+<main class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <p class="text-muted mb-0"><span id="total-productos">0</span> productos encontrados</p>
+  </div>
+  <div id="loading" class="text-center py-5">
+    <div class="spinner-border text-secondary" role="status"></div>
+    <p class="mt-3 text-muted small">Cargando productos...</p>
+  </div>
+  <div id="productos-grid" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4" style="display:none!important"></div>
+  <div id="empty-state" class="text-center py-5 d-none">
+    <i class="bi bi-search display-1 text-muted"></i>
+    <h5 class="mt-3 text-muted">Sin resultados</h5>
+    <p class="text-muted small">Prueba con otros filtros o términos de búsqueda.</p>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="ms-footer py-4 mt-auto">
+  <div class="container text-center">
+    <p class="ms-brand mb-1">MercaShop</p>
+    <p class="text-muted small mb-0">© 2025 – Todos los derechos reservados</p>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index:1100">
+  <div id="toast-carrito" class="toast align-items-center text-bg-dark border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toast-msg">Producto agregado al carrito</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/catalogo.js"></script>
 </body>
 </html>
