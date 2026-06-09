@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../../backend/db.php';
+require 'db.php';
 header('Content-Type: application/json');
 
 $correo = $_POST['correo'] ?? '';

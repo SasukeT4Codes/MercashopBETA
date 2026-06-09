@@ -7,15 +7,19 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Mercashop</a>
-      <div class="d-flex">
-        <button class="btn btn-outline-light me-2" onclick="mostrarCatalogo()">Catálogo</button>
-        <button class="btn btn-outline-light" onclick="mostrarCarrito()">Carrito</button>
+  <header class="barra-superior">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Mercashop</a>
+        <div class="d-flex">
+          <button class="btn btn-outline-light me-2" onclick="mostrarCatalogo()">Catálogo</button>
+          <button class="btn btn-outline-light" onclick="mostrarCarrito()">Carrito</button>
+          <button class="btn btn-outline-light" onclick="window.location.href='admin/login.html'">Panel_Admin</button>
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </header>
+  
 
   <div class="container mt-4">
     <div id="contenido" class="row">
