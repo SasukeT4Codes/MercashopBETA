@@ -13,11 +13,7 @@
 </head>
 <body class="ms-login-body">
 
-<nav class="navbar ms-navbar">
-  <div class="container">
-    <a class="navbar-brand ms-brand" href="index.html">MercaShop</a>
-  </div>
-</nav>
+<div id="navbar"></div>
 
 <main class="d-flex align-items-center justify-content-center" style="min-height:calc(100vh - 66px)">
   <div class="container py-5">
@@ -31,49 +27,23 @@
           </div>
 
           <ul class="nav nav-pills nav-fill mb-4 ms-tabs" id="auth-tabs">
-            <li class="nav-item">
-              <button class="nav-link active" data-tab="login">Iniciar sesión</button>
-            </li>
-            <li class="nav-item">
-              <button class="nav-link" data-tab="registro">Registrarse</button>
-            </li>
+            <li class="nav-item"><button class="nav-link active" data-tab="login">Iniciar sesión</button></li>
+            <li class="nav-item"><button class="nav-link" data-tab="registro">Registrarse</button></li>
           </ul>
 
           <div id="form-login">
             <div class="mb-3">
               <label class="form-label small fw-500">Correo electrónico</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white"><i class="bi bi-envelope text-muted"></i></span>
-                <input type="email" id="login-email" class="form-control border-start-0 ps-0" placeholder="tu@correo.com"/>
-              </div>
+              <input type="email" id="login-email" class="form-control" placeholder="tu@correo.com"/>
             </div>
             <div class="mb-3">
               <label class="form-label small fw-500">Contraseña</label>
-              <div class="input-group">
-                <span class="input-group-text bg-white"><i class="bi bi-lock text-muted"></i></span>
-                <input type="password" id="login-pass" class="form-control border-start-0 ps-0" placeholder="••••••••"/>
-                <button class="btn btn-outline-secondary" type="button" id="toggle-pass">
-                  <i class="bi bi-eye" id="pass-icon"></i>
-                </button>
-              </div>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-4">
-              <div class="form-check mb-0">
-                <input class="form-check-input" type="checkbox" id="remember-me"/>
-                <label class="form-check-label small" for="remember-me">Recuérdame</label>
-              </div>
-              <a href="#" class="small text-dark">¿Olvidaste tu contraseña?</a>
+              <input type="password" id="login-pass" class="form-control" placeholder="••••••••"/>
             </div>
             <div id="login-error" class="alert alert-danger small d-none"></div>
             <div class="d-grid mb-3">
-              <button class="btn btn-dark btn-lg" id="btn-login">
-                <span id="login-text">Iniciar sesión</span>
-                <span id="login-spinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
-              </button>
+              <button class="btn btn-dark btn-lg" id="btn-login">Iniciar sesión</button>
             </div>
-            <p class="text-center small text-muted mb-0">
-              ¿No tienes cuenta? <a href="#" class="text-dark" id="link-a-registro">Regístrate</a>
-            </p>
           </div>
 
           <div id="form-registro" class="d-none">
@@ -110,15 +80,7 @@
             </div>
             <div id="reg-error" class="alert alert-danger small d-none"></div>
             <div id="reg-success" class="alert alert-success small d-none"></div>
-            <div class="d-grid mb-3">
-              <button class="btn btn-dark btn-lg" id="btn-registro">
-                <span id="reg-text">Crear cuenta</span>
-                <span id="reg-spinner" class="spinner-border spinner-border-sm d-none ms-2"></span>
-              </button>
-            </div>
-            <p class="text-center small text-muted mb-0">
-              ¿Ya tienes cuenta? <a href="#" class="text-dark" id="link-a-login">Inicia sesión</a>
-            </p>
+            <div class="d-grid mb-3"><button class="btn btn-dark btn-lg" id="btn-registro">Crear cuenta</button></div>
           </div>
         </div>
       </div>
