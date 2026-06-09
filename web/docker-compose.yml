@@ -1,0 +1,26 @@
+services:
+  db:
+    image: mysql:8
+    container_name: mercashop_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mercashop
+      MYSQL_USER: app
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+  php:
+    build: ./backend
+    container_name: mercashop_php
+    restart: always
+    volumes:
+      - ./frontend:/var/www/html
+      - ./backend:/var/www/html/api
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
