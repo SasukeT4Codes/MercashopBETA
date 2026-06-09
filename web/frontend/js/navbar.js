@@ -22,9 +22,25 @@ function actualizarContador() {
 
 function mostrarUsuario() {
   const user = localStorage.getItem("ms_user");
-  if (user) {
+  const el = document.getElementById("nav-user");
+  if (user && el) {
     const u = JSON.parse(user);
-    const el = document.getElementById("nav-user");
-    if (el) el.textContent = u.nombre + " " + u.apellido;
+    el.textContent = u.nombre + " " + u.apellido;
+    const link = el.closest("a");
+    if (link) link.href = "mis_pedidos.html"; // redirigir al historial
+
+    // Agregar botón logout como ícono separado
+    const navContainer = link.parentElement; // el div con gap-3
+    const logoutBtn = document.createElement("a");
+    logoutBtn.href = "#";
+    logoutBtn.className = "nav-link text-white ms-2"; // espacio extra
+    logoutBtn.innerHTML = '<i class="bi bi-box-arrow-right"></i>'; // solo ícono
+    logoutBtn.title = "Cerrar sesión"; // tooltip al pasar el mouse
+    logoutBtn.addEventListener("click", e => {
+      e.preventDefault();
+      localStorage.removeItem("ms_user");
+      window.location.href = "login.html";
+    });
+    navContainer.appendChild(logoutBtn);
   }
 }
