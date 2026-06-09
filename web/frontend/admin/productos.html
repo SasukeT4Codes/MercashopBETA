@@ -2,38 +2,70 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Productos</title>
+  <title>Admin - Productos por Tienda</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container mt-4">
-    <h1>Gestión de Productos</h1>
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Panel Administrador</a>
+      <div>
+        <a href="tiendas.html" class="btn btn-outline-light me-2">Gestión de Tiendas</a>
+        <a href="index.html" class="btn btn-outline-light">Volver al Dashboard</a>
+      </div>
+    </div>
+  </nav>
 
-    <!-- Formulario -->
+  <div class="container mt-4">
+    <h1 class="mb-3">Gestión de Productos por Tienda</h1>
+
+    <!-- Selección de tienda -->
+    <div class="mb-3 row">
+      <label class="col-sm-2 col-form-label" for="tiendaSelect">Tienda</label>
+      <div class="col-sm-6">
+        <select id="tiendaSelect" class="form-select">
+          <option value="">Seleccione una tienda...</option>
+        </select>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Formulario producto -->
     <form id="formProducto" class="mb-4">
-      <div class="row">
-        <div class="col-md-4">
-          <input type="text" name="cDescripcionCorta" class="form-control" placeholder="Nombre corto" required>
+      <input type="hidden" id="productoId">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <input type="text" id="nombre" class="form-control" placeholder="Nombre corto" required>
         </div>
-        <div class="col-md-4">
-          <input type="text" name="cDescripcionLarga" class="form-control" placeholder="Descripción larga">
-        </div>
-        <div class="col-md-2">
-          <input type="number" name="nPrecioUnitario" class="form-control" placeholder="Precio" required>
+        <div class="col-md-3">
+          <input type="text" id="descripcion" class="form-control" placeholder="Descripción larga">
         </div>
         <div class="col-md-2">
-          <button type="submit" class="btn btn-success w-100">Agregar</button>
+          <input type="number" step="0.01" id="precio" class="form-control" placeholder="Precio" required>
         </div>
+        <div class="col-md-2">
+          <input type="number" id="stock" class="form-control" placeholder="Stock" required>
+        </div>
+        <div class="col-md-2 d-grid">
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </div>
+      <div class="mt-2">
+        <small class="text-muted">
+          Primero selecciona una tienda. Si eliges un producto para editar, el formulario se llenará con sus datos.
+        </small>
       </div>
     </form>
 
-    <!-- Tabla -->
+    <!-- Tabla productos -->
     <table class="table table-striped" id="tablaProductos">
       <thead>
         <tr>
           <th>ID</th>
           <th>Nombre</th>
           <th>Precio</th>
+          <th>Stock</th>
           <th>Acciones</th>
         </tr>
       </thead>
