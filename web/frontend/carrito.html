@@ -42,14 +42,25 @@
 
   <div id="carrito-wrap" class="row g-4">
     <div class="col-lg-8">
-      <div id="lista-items"></div>
+      <table class="table align-middle" id="tablaCarrito">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
     <div class="col-lg-4">
       <div class="card border-0 shadow-sm p-4 sticky-top" style="top:80px">
         <h5 class="ms-title mb-4">Resumen</h5>
         <div class="d-flex justify-content-between mb-2">
           <span class="text-muted small">Subtotal</span>
-          <span id="res-subtotal">$0.00</span>
+          <span id="res-subtotal">$0</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span class="text-muted small">Envío</span>
@@ -62,7 +73,7 @@
         <hr/>
         <div class="d-flex justify-content-between mb-4">
           <strong>Total</strong>
-          <strong id="res-total">$0.00</strong>
+          <strong id="res-total">$0</strong>
         </div>
         <div class="mb-4">
           <label class="form-label small fw-500">Código de cupón</label>
