@@ -15,6 +15,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Toggle contraseña
+  document.getElementById("toggle-pass")?.addEventListener("click", () => {
+    const input = document.getElementById("login-pass");
+    const icon = document.getElementById("pass-icon");
+    input.type = input.type === "password" ? "text" : "password";
+    icon.classList.toggle("bi-eye");
+    icon.classList.toggle("bi-eye-slash");
+  });
+
   // Cargar departamentos
   async function cargarDepartamentos() {
     try {
@@ -53,7 +62,9 @@ document.addEventListener("DOMContentLoaded", () => {
     errEl.classList.add("d-none");
 
     if (!email || !pass) return mostrarError(errEl, "Completa todos los campos");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return mostrarError(errEl, "Correo no válido");
 
+    setLoading("login", true);
     try {
       const resp = await fetch(AUTH_API, {
         method: "POST",
@@ -64,9 +75,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.ok) {
         localStorage.setItem("ms_user", JSON.stringify(data.usuario));
         window.location.href = "index.html";
-      } else mostrarError(errEl, data.mensaje);
+      } else mostrarError(errEl, data.mensaje || "Credenciales incorrectas");
     } catch {
       mostrarError(errEl, "Error de conexión con el servidor");
+    } finally {
+      setLoading("login", false);
     }
   });
 
@@ -92,6 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (pass.length < 8) return mostrarError(errEl, "La contraseña debe tener al menos 8 caracteres");
     if (pass !== pass2) return mostrarError(errEl, "Las contraseñas no coinciden");
 
+    setLoading("reg", true);
     try {
       const resp = await fetch(AUTH_API, {
         method: "POST",
@@ -107,14 +121,28 @@ document.addEventListener("DOMContentLoaded", () => {
         okEl.textContent = "¡Cuenta creada! Ahora puedes iniciar sesión.";
         okEl.classList.remove("d-none");
         setTimeout(() => document.querySelector('[data-tab="login"]').click(), 2000);
-      } else mostrarError(errEl, data.mensaje);
+      } else mostrarError(errEl, data.mensaje || "Error al crear la cuenta");
     } catch {
       mostrarError(errEl, "Error de conexión con el servidor");
+    } finally {
+      setLoading("reg", false);
     }
   });
 });
 
+// Funciones auxiliares
 function mostrarError(el, msg) {
   el.textContent = msg;
   el.classList.remove("d-none");
+}
+
+function setLoading(form, on) {
+  const spinner = document.getElementById(`${form}-spinner`);
+  const text = document.getElementById(`${form}-text`);
+  if (spinner && text) {
+    spinner.classList.toggle("d-none", !on);
+    text.textContent = on
+      ? (form === "login" ? "Iniciando..." : "Creando cuenta...")
+      : (form === "login" ? "Iniciar sesión" : "Crear cuenta");
+  }
 }

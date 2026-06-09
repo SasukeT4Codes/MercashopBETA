@@ -13,27 +13,10 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg ms-navbar sticky-top">
-  <div class="container">
-    <a class="navbar-brand ms-brand" href="index.html">MercaShop</a>
-    <button class="navbar-toggler border-0 ms-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
-      <i class="bi bi-list text-white fs-4"></i>
-    </button>
-    <div class="collapse navbar-collapse" id="navMain">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
-        <li class="nav-item"><a class="nav-link text-white active" href="index.html">Catálogo</a></li>
-      </ul>
-      <div class="d-flex align-items-center gap-3">
-        <a href="login.html" class="nav-link text-white"><i class="bi bi-person"></i></a>
-        <a href="carrito.html" class="nav-link text-white position-relative">
-          <i class="bi bi-bag"></i>
-          <span class="badge bg-warning text-dark position-absolute top-0 start-100 translate-middle rounded-pill" id="cart-count">0</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</nav>
+<!-- NAVBAR -->
+<div id="navbar"></div>
 
+<!-- HERO -->
 <div class="ms-hero py-5 text-center">
   <div class="container py-4">
     <p class="text-uppercase letter-wide small mb-2 text-muted">Bienvenido a MercaShop</p>
@@ -42,6 +25,7 @@
   </div>
 </div>
 
+<!-- FILTROS -->
 <div class="bg-white border-bottom py-3 sticky-filters">
   <div class="container">
     <div class="row g-2 align-items-center">
@@ -87,6 +71,7 @@
   </div>
 </div>
 
+<!-- CATÁLOGO -->
 <main class="container py-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <p class="text-muted mb-0"><span id="total-productos">0</span> productos encontrados</p>
@@ -103,6 +88,7 @@
   </div>
 </main>
 
+<!-- FOOTER -->
 <footer class="ms-footer py-4 mt-auto">
   <div class="container text-center">
     <p class="ms-brand mb-1">MercaShop</p>
@@ -110,6 +96,7 @@
   </div>
 </footer>
 
+<!-- TOAST -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index:1100">
   <div id="toast-carrito" class="toast align-items-center text-bg-dark border-0" role="alert">
     <div class="d-flex">
