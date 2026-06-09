@@ -1,128 +1,232 @@
-
 :root {
-  --ms-dark:    #1e1e1e;
-  --ms-gray:    #2e2e2e;
-  --ms-light:   #f8f7f5;
-  --ms-muted:   #888;
-  --ms-accent:  #c8a96e;
+  --ms-blue-950: #12324e;
+  --ms-blue-900: #1f5f9c;
+  --ms-blue-700: #4b93d1;
+  --ms-blue-500: #72b7ea;
+  --ms-blue-100: #eaf4ff;
+  --ms-surface: #ffffff;
+  --ms-bg: #f4f9ff;
+  --ms-text: #18324a;
+  --ms-muted: #6b7c8f;
+  --ms-border: #d9e8f6;
+  --ms-shadow: 0 12px 30px rgba(18, 50, 78, .08);
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans:  'DM Sans', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
 }
- 
-*, *::before, *::after { box-sizing: border-box; }
- 
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
 body {
   font-family: var(--font-sans);
-  background-color: var(--ms-light);
-  color: var(--ms-dark);
+  background: var(--ms-bg);
+  color: var(--ms-text);
+  min-height: 100vh;
 }
- 
-/* ——— Tipografía ——— */
-.ms-title      { font-family: var(--font-serif); font-weight: 600; }
-.ms-brand      { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: .04em; }
-.ms-product-name { font-family: var(--font-serif); font-size: .95rem; font-weight: 400; }
-.letter-wide   { letter-spacing: .12em; }
-.fw-500        { font-weight: 500; }
- 
-/* ——— Navbar ——— */
+
+a { color: var(--ms-blue-900); text-decoration: none; }
+a:hover { color: var(--ms-blue-700); }
+
+.ms-page-main { min-height: calc(100vh - 140px); }
+.ms-title, .ms-brand { font-family: var(--font-serif); }
+.ms-title { font-weight: 700; letter-spacing: -.02em; }
+.ms-brand { font-weight: 600; letter-spacing: .04em; }
+
+.ms-brand-mark {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+  color: #fff;
+}
+
 .ms-navbar {
-  background-color: var(--ms-dark) !important;
-  padding: .9rem 0;
+  background: linear-gradient(90deg, var(--ms-blue-950), var(--ms-blue-900)) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
-.ms-navbar .ms-brand { color: #fff !important; }
- 
-/* ——— Hero ——— */
+
+.ms-navbar .ms-brand,
+.ms-navbar .nav-link {
+  color: #fff !important;
+}
+
+.ms-navbar .nav-link {
+  font-weight: 500;
+  opacity: .9;
+}
+
+.ms-navbar .nav-link:hover,
+.ms-navbar .nav-link.active {
+  opacity: 1;
+  color: #fff !important;
+}
+
+.ms-toggler:focus {
+  box-shadow: 0 0 0 .2rem rgba(114, 183, 234, .35);
+}
+
+.ms-nav-links .nav-link {
+  padding: .6rem .9rem;
+  border-radius: .75rem;
+  transition: background .2s ease, color .2s ease;
+}
+
+.ms-nav-links .nav-link:hover {
+  background: rgba(255,255,255,.08);
+}
+
 .ms-hero {
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
+  background: radial-gradient(circle at top, #ffffff 0%, #f5fbff 100%);
+  border-bottom: 1px solid var(--ms-border);
 }
- 
-/* ——— Filtros sticky ——— */
+
+.ms-hero .lead { color: var(--ms-muted); }
+
 .sticky-filters {
   top: 66px;
   z-index: 900;
+  background: rgba(244,249,255,.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--ms-border);
 }
+
 .sticky-filters .form-select,
 .sticky-filters .form-control {
-  border-color: #ddd;
-  font-size: .875rem;
+  border-color: var(--ms-border);
+  font-size: .95rem;
+  box-shadow: none;
 }
- 
-/* ——— Tarjeta de producto ——— */
+
+.sticky-filters .form-select:focus,
+.sticky-filters .form-control:focus {
+  border-color: var(--ms-blue-500);
+  box-shadow: 0 0 0 .2rem rgba(114, 183, 234, .2);
+}
+
 .ms-card {
-  background: #fff;
-  transition: transform .25s ease, box-shadow .25s ease;
+  background: var(--ms-surface);
+  border: 1px solid var(--ms-border);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   animation: fadeUp .4s ease both;
 }
+
 .ms-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0,0,0,.09) !important;
+  box-shadow: var(--ms-shadow);
+  border-color: rgba(75, 147, 209, .35);
 }
- 
-.ms-card-img-wrap { background: #f5f4f2; }
+
+.ms-card-img-wrap {
+  background: var(--ms-blue-100);
+  position: relative;
+}
+
 .ms-card-img {
   height: 260px;
+  width: 100%;
   object-fit: cover;
-  transition: transform .4s ease;
+  transition: transform .35s ease;
 }
-.ms-card:hover .ms-card-img { transform: scale(1.03); }
- 
-/* Botón "agregar" aparece al hover */
+
+.ms-card:hover .ms-card-img {
+  transform: scale(1.03);
+}
+
 .ms-btn-agregar {
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity .25s ease, transform .25s ease;
+  transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease;
   border-radius: 0;
   font-size: .8rem;
   letter-spacing: .08em;
-  padding: .6rem;
+  padding: .75rem;
 }
+
 .ms-card-img-wrap:hover .ms-btn-agregar {
   opacity: 1;
   transform: translateY(0);
 }
- 
-/* ——— Detalle de producto ——— */
+
+.ms-product-name {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--ms-text);
+}
+
+.ms-price {
+  color: var(--ms-blue-900);
+  font-weight: 700;
+}
+
+.ms-muted { color: var(--ms-muted); }
+
 .ms-detalle-img-wrap {
   height: 520px;
-  background: #f5f4f2;
+  background: var(--ms-blue-100);
+  border: 1px solid var(--ms-border);
 }
+
 @media (max-width: 767px) {
   .ms-detalle-img-wrap { height: 320px; }
 }
- 
-/* ——— Carrito ——— */
-.ms-success-icon { font-size: 4rem; }
- 
-/* ——— Login ——— */
-.ms-login-body { background-color: #f0eeeb; }
+
+.ms-footer {
+  background: linear-gradient(90deg, var(--ms-blue-950), var(--ms-blue-900));
+  color: #fff;
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.ms-footer .ms-brand,
+.ms-footer-copy {
+  color: #fff;
+  opacity: .92;
+}
+
+.ms-login-body {
+  background: linear-gradient(180deg, #eff7ff 0%, #f8fbff 100%);
+}
+
 .ms-tabs .nav-link {
   color: var(--ms-muted);
-  background: transparent;
-  border-radius: .375rem;
+  background: #fff;
+  border: 1px solid var(--ms-border);
+  border-radius: .75rem;
   font-size: .875rem;
+  padding: .65rem .9rem;
 }
+
 .ms-tabs .nav-link.active {
-  background-color: var(--ms-dark);
+  background: linear-gradient(90deg, var(--ms-blue-950), var(--ms-blue-900));
   color: #fff;
+  border-color: transparent;
 }
- 
-/* ——— Footer ——— */
-.ms-footer {
-  background-color: var(--ms-dark);
-  color: #fff;
+
+.ms-section-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
 }
-.ms-footer .ms-brand { color: #fff; }
- 
-/* ——— Animaciones ——— */
+
+.ms-soft-card {
+  background: rgba(255,255,255,.85);
+  border: 1px solid var(--ms-border);
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px rgba(18, 50, 78, .05);
+}
+
+.object-fit-cover { object-fit: cover; }
+.letter-wide { letter-spacing: .12em; }
+.fw-500 { font-weight: 500; }
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: translateY(0); }
 }
- 
-/* ——— Utilities ——— */
-.object-fit-cover { object-fit: cover; }

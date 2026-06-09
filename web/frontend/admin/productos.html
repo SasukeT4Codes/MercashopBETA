@@ -2,77 +2,135 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Productos por Tienda</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Productos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="../css/style.css" rel="stylesheet">
+  <link href="../css/admin.css" rel="stylesheet">
+  <link href="../css/responsive.css" rel="stylesheet">
 </head>
-<body>
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">Panel Administrador</a>
-      <div>
-        <a href="tiendas.html" class="btn btn-outline-light me-2">Gestión de Tiendas</a>
-        <a href="index.html" class="btn btn-outline-light">Volver al Dashboard</a>
-      </div>
+<body class="admin-shell">
+
+<nav class="navbar navbar-expand-lg admin-navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand ms-brand" href="index.html">Panel Administrador</a>
+    <div class="d-flex gap-2">
+      <a href="tiendas.html" class="btn btn-outline-light btn-sm">Tiendas</a>
+      <a href="compras.html" class="btn btn-outline-light btn-sm">Ventas</a>
     </div>
-  </nav>
-
-  <div class="container mt-4">
-    <h1 class="mb-3">Gestión de Productos por Tienda</h1>
-
-    <!-- Selección de tienda -->
-    <div class="mb-3 row">
-      <label class="col-sm-2 col-form-label" for="tiendaSelect">Tienda</label>
-      <div class="col-sm-6">
-        <select id="tiendaSelect" class="form-select">
-          <option value="">Seleccione una tienda...</option>
-        </select>
-      </div>
-    </div>
-
-    <hr>
-
-    <!-- Formulario producto -->
-    <form id="formProducto" class="mb-4">
-      <input type="hidden" id="productoId">
-      <div class="row g-2">
-        <div class="col-md-3">
-          <input type="text" id="nombre" class="form-control" placeholder="Nombre corto" required>
-        </div>
-        <div class="col-md-3">
-          <input type="text" id="descripcion" class="form-control" placeholder="Descripción larga">
-        </div>
-        <div class="col-md-2">
-          <input type="number" step="0.01" id="precio" class="form-control" placeholder="Precio" required>
-        </div>
-        <div class="col-md-2">
-          <input type="number" id="stock" class="form-control" placeholder="Stock" required>
-        </div>
-        <div class="col-md-2 d-grid">
-          <button type="submit" class="btn btn-success">Guardar</button>
-        </div>
-      </div>
-      <div class="mt-2">
-        <small class="text-muted">
-          Primero selecciona una tienda. Si eliges un producto para editar, el formulario se llenará con sus datos.
-        </small>
-      </div>
-    </form>
-
-    <!-- Tabla productos -->
-    <table class="table table-striped" id="tablaProductos">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Precio</th>
-          <th>Stock</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
   </div>
+</nav>
 
-  <script src="productos.js"></script>
+<div class="container py-4">
+  <div class="admin-panel">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+      <div>
+        <h1 class="admin-title mb-1">Gestión de Productos</h1>
+        <p class="admin-subtitle mb-0">Selecciona una tienda para administrar su catálogo.</p>
+      </div>
+      <span class="admin-badge"><i class="bi bi-shop"></i> Productos por tienda</span>
+    </div>
+
+    <div class="admin-card p-3 mb-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-8">
+          <label for="tiendaSelector" class="form-label fw-500">Seleccionar tienda</label>
+          <select id="tiendaSelector" class="form-select" required>
+            <option value="" selected disabled>-- Selecciona una tienda --</option>
+          </select>
+        </div>
+        <div class="col-md-4 d-grid">
+          <button class="btn btn-outline-dark admin-btn-soft" id="btnRecargarProductos" disabled>
+            <i class="bi bi-arrow-clockwise me-1"></i> Recargar productos
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="tiendaActivaBox" class="admin-summary admin-card mb-4 d-none">
+      <div class="admin-muted small">Tienda seleccionada</div>
+      <div class="fs-5 fw-bold" id="tiendaActivaNombre">-</div>
+      <div class="small admin-muted" id="tiendaActivaId"></div>
+    </div>
+
+    <div id="bloqueProductos" class="d-none">
+      <form id="formProducto" class="admin-form mb-4" enctype="multipart/form-data">
+        <input type="hidden" id="producto-id" name="id" value="">
+        <input type="hidden" id="tienda_id" name="tienda_id" value="">
+
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="nombre" class="form-label">Nombre corto</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required>
+          </div>
+
+          <div class="col-md-4">
+            <label for="descripcion" class="form-label">Descripción larga</label>
+            <input type="text" id="descripcion" name="descripcion" class="form-control">
+          </div>
+
+          <div class="col-md-4">
+            <label for="precio" class="form-label">Precio</label>
+            <input type="number" id="precio" name="precio" class="form-control" required>
+          </div>
+
+          <div class="col-md-4">
+            <label for="stock" class="form-label">Stock</label>
+            <input type="number" id="stock" name="stock" class="form-control" required>
+          </div>
+
+          <div class="col-md-4">
+            <label for="imagen" class="form-label">Imagen del producto</label>
+            <input type="file" id="imagen" name="imagen" class="form-control" accept="image/*">
+            <div class="form-text">Se comprimirá y se guardará en el servidor.</div>
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Vista previa</label>
+            <div class="border rounded bg-light d-flex align-items-center justify-content-center" style="height:120px;">
+              <img id="previewImagen" src="" alt="" class="img-fluid d-none" style="max-height:120px; object-fit:cover;">
+              <span id="previewPlaceholder" class="text-muted small">Sin imagen seleccionada</span>
+            </div>
+          </div>
+
+          <div class="col-12 d-grid d-md-flex justify-content-md-end gap-2">
+            <button type="button" class="btn btn-outline-dark admin-btn-soft" id="btnCancelarEdicion" style="display:none;">
+              Cancelar edición
+            </button>
+            <button type="submit" class="btn btn-dark admin-btn-primary px-4">
+              Guardar producto
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div class="table-responsive admin-table-wrap">
+        <table class="table admin-table table-striped align-middle" id="tablaProductos">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="5" class="text-center admin-muted py-4">Selecciona una tienda para ver sus productos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="mensajeSeleccionTienda" class="admin-empty text-center py-5">
+      <i class="bi bi-building display-6 mb-3"></i>
+      <h5 class="mb-2">Selecciona una tienda</h5>
+      <p class="mb-0">Primero elige una tienda para cargar, crear, editar o eliminar sus productos.</p>
+    </div>
+  </div>
+</div>
+
+<script src="productos.js"></script>
 </body>
 </html>

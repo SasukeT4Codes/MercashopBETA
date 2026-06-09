@@ -1,171 +1,219 @@
-let tiendaActual = '';
+const API_TIENDAS = "/api/admin_tiendas.php";
+const API_PRODUCTOS = "/api/admin_productos.php";
 
-const selectTienda = document.getElementById('tiendaSelect');
-const form = document.getElementById('formProducto');
-const inputId = document.getElementById('productoId');
-const inputNombre = document.getElementById('nombre');
-const inputDescripcion = document.getElementById('descripcion');
-const inputPrecio = document.getElementById('precio');
-const inputStock = document.getElementById('stock');
-const tbody = document.querySelector('#tablaProductos tbody');
+let tiendaActual = "";
+let tiendaNombreActual = "";
+let editandoId = null;
+let tiendasCache = [];
+let productoSeleccionado = null;
 
-function formatearCOP(valor) {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(valor);
+document.addEventListener("DOMContentLoaded", async () => {
+  await cargarTiendas();
+  conectarEventos();
+});
+
+function conectarEventos() {
+  document.getElementById("tiendaSelector").addEventListener("change", async e => {
+    tiendaActual = e.target.value;
+    tiendaNombreActual = obtenerNombreTienda(tiendaActual);
+    document.getElementById("tienda_id").value = tiendaActual;
+    actualizarTiendaActiva();
+    activarVistaProductos();
+    if (tiendaActual) await cargarProductos();
+  });
+
+  document.getElementById("btnRecargarProductos").addEventListener("click", async () => {
+    if (tiendaActual) await cargarProductos();
+  });
+
+  document.getElementById("formProducto").addEventListener("submit", guardarProducto);
+  document.getElementById("btnCancelarEdicion").addEventListener("click", cancelarEdicion);
+
+  document.getElementById("imagen").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) {
+      document.getElementById("previewImagen").classList.add("d-none");
+      document.getElementById("previewPlaceholder").classList.remove("d-none");
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById("previewImagen");
+    img.src = url;
+    img.classList.remove("d-none");
+    document.getElementById("previewPlaceholder").classList.add("d-none");
+  });
 }
 
 async function cargarTiendas() {
   try {
-    const res = await fetch('/api/admin_tiendas.php?action=list');
-    const data = await res.json();
-    selectTienda.innerHTML = '<option value="">Seleccione una tienda...</option>';
+    const resp = await fetch(`${API_TIENDAS}?action=list`);
+    const data = await resp.json();
+    tiendasCache = data.data || [];
 
-    if (data.OK) {
-      data.data.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.nTiendaID;
-        opt.textContent = `${t.nTiendaID} - ${t.cNombreComercial}`;
-        selectTienda.appendChild(opt);
-      });
-    } else {
-      alert('Error al cargar tiendas: ' + (data.error || ''));
-    }
-  } catch (e) {
-    console.error(e);
-    alert('Error de red al cargar tiendas');
+    const sel = document.getElementById("tiendaSelector");
+    sel.innerHTML = `<option value="" selected disabled>-- Selecciona una tienda --</option>`;
+
+    tiendasCache.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.nTiendaID;
+      opt.textContent = t.cNombreComercial;
+      sel.appendChild(opt);
+    });
+  } catch {
+    document.getElementById("tiendaSelector").innerHTML = `<option value="" selected disabled>No se pudieron cargar las tiendas</option>`;
+  }
+}
+
+function obtenerNombreTienda(id) {
+  const t = tiendasCache.find(x => String(x.nTiendaID) === String(id));
+  return t ? t.cNombreComercial : "";
+}
+
+function actualizarTiendaActiva() {
+  const box = document.getElementById("tiendaActivaBox");
+  const nombre = document.getElementById("tiendaActivaNombre");
+  const id = document.getElementById("tiendaActivaId");
+
+  if (tiendaActual) {
+    box.classList.remove("d-none");
+    nombre.textContent = tiendaNombreActual || "Tienda seleccionada";
+    id.textContent = `ID: ${tiendaActual}`;
+  } else {
+    box.classList.add("d-none");
+    nombre.textContent = "-";
+    id.textContent = "";
+  }
+}
+
+function activarVistaProductos() {
+  const bloque = document.getElementById("bloqueProductos");
+  const msg = document.getElementById("mensajeSeleccionTienda");
+  const btn = document.getElementById("btnRecargarProductos");
+
+  if (tiendaActual) {
+    bloque.classList.remove("d-none");
+    msg.classList.add("d-none");
+    btn.disabled = false;
+  } else {
+    bloque.classList.add("d-none");
+    msg.classList.remove("d-none");
+    btn.disabled = true;
   }
 }
 
 async function cargarProductos() {
-  if (!tiendaActual) {
-    tbody.innerHTML = '<tr><td colspan="5">Seleccione una tienda.</td></tr>';
-    return;
-  }
+  const tbody = document.querySelector("#tablaProductos tbody");
+  tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Cargando productos...</td></tr>`;
 
   try {
-    const res = await fetch(`/api/admin_productos.php?action=list&tienda=${tiendaActual}`);
-    const data = await res.json();
-    tbody.innerHTML = '';
+    const resp = await fetch(`${API_PRODUCTOS}?action=list&tienda=${encodeURIComponent(tiendaActual)}`);
+    const data = await resp.json();
+    const lista = data.data || [];
 
-    if (data.OK && data.data.length > 0) {
-      data.data.forEach(p => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${p.nProductoID}</td>
-          <td>${p.cDescripcionCorta}</td>
-          <td>${formatearCOP(p.nPrecioUnitario)}</td>
-          <td>${p.nCantidadStock}</td>
-          <td>
-            <button class="btn btn-sm btn-warning me-1"
-              onclick="editarProducto(${p.nProductoID},
-                                      '${p.cDescripcionCorta.replace(/'/g, "\\'")}',
-                                      \`${(p.cDescripcionLarga || '').replace(/`/g, '\\`')}\`,
-                                      ${p.nPrecioUnitario},
-                                      ${p.nCantidadStock})">
-              Editar
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="eliminarProducto(${p.nProductoID})">
-              Eliminar
-            </button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } else if (data.OK) {
-      tbody.innerHTML = '<tr><td colspan="5">Sin productos para esta tienda.</td></tr>';
-    } else {
-      alert('Error al cargar productos: ' + (data.error || ''));
+    if (!lista.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center admin-muted py-4">Esta tienda no tiene productos todavía.</td></tr>`;
+      return;
     }
-  } catch (e) {
-    console.error(e);
-    alert('Error de red al cargar productos');
+
+    tbody.innerHTML = "";
+    lista.forEach(p => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${p.nProductoID}</td>
+        <td>${p.cDescripcionCorta || ""}</td>
+        <td>${formatoCOP(p.nPrecioUnitario || 0)}</td>
+        <td>${p.nCantidadStock || 0}</td>
+        <td>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-dark admin-btn-soft" data-action="editar" data-id="${p.nProductoID}">Editar</button>
+            <button class="btn btn-sm btn-danger" data-action="eliminar" data-id="${p.nProductoID}">Eliminar</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll("button[data-action='editar']").forEach(btn => {
+      btn.addEventListener("click", () => iniciarEdicion(btn.dataset.id));
+    });
+
+    tbody.querySelectorAll("button[data-action='eliminar']").forEach(btn => {
+      btn.addEventListener("click", () => eliminarProducto(btn.dataset.id));
+    });
+  } catch {
+    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">No se pudieron cargar los productos.</td></tr>`;
   }
 }
 
-selectTienda.addEventListener('change', () => {
-  tiendaActual = selectTienda.value;
-  inputId.value = '';
-  form.reset();
-  cargarProductos();
-});
-
-form.addEventListener('submit', async e => {
+async function guardarProducto(e) {
   e.preventDefault();
+  if (!tiendaActual) return;
 
-  if (!tiendaActual) {
-    alert('Selecciona una tienda antes de agregar productos');
-    return;
+  const form = e.target;
+  const fd = new FormData(form);
+  fd.set("tienda_id", tiendaActual);
+
+  let action = "add";
+  if (editandoId) {
+    action = "update";
+    fd.set("id", editandoId);
   }
 
-  const id = inputId.value;
+  try {
+    const resp = await fetch(`${API_PRODUCTOS}?action=${action}`, { method: "POST", body: fd });
+    const data = await resp.json();
+    if (data.OK === false) {
+      alert(data.error || "No se pudo guardar el producto");
+      return;
+    }
+    form.reset();
+    cancelarEdicion();
+    document.getElementById("tienda_id").value = tiendaActual;
+    document.getElementById("previewImagen").classList.add("d-none");
+    document.getElementById("previewPlaceholder").classList.remove("d-none");
+    await cargarProductos();
+  } catch {
+    alert("No se pudo guardar el producto");
+  }
+}
+
+function iniciarEdicion(id) {
+  editandoId = id;
+  document.getElementById("producto-id").value = id;
+  document.getElementById("btnCancelarEdicion").style.display = "inline-block";
+}
+
+function cancelarEdicion() {
+  editandoId = null;
+  document.getElementById("producto-id").value = "";
+  document.getElementById("formProducto").reset();
+  document.getElementById("btnCancelarEdicion").style.display = "none";
+  document.getElementById("tienda_id").value = tiendaActual;
+}
+
+async function eliminarProducto(id) {
+  if (!confirm("¿Eliminar este producto?")) return;
+
   const fd = new FormData();
-  fd.append('tienda_id', tiendaActual);
-  fd.append('nombre', inputNombre.value);
-  fd.append('descripcion', inputDescripcion.value);
-  fd.append('precio', inputPrecio.value);
-  fd.append('stock', inputStock.value);
-
-  let action = 'add';
-  if (id) {
-    action = 'update';
-    fd.append('id', id);
-  }
+  fd.set("id", id);
 
   try {
-    const res = await fetch(`/api/admin_productos.php?action=${action}`, {
-      method: 'POST',
-      body: fd
-    });
-    const data = await res.json();
-
-    if (data.OK) {
-      alert(id ? 'Producto actualizado correctamente' : 'Producto creado correctamente');
-      form.reset();
-      inputId.value = '';
-      cargarProductos();
-    } else {
-      alert('No se pudo guardar el producto: ' + (data.error || ''));
+    const resp = await fetch(`${API_PRODUCTOS}?action=delete`, { method: "POST", body: fd });
+    const data = await resp.json();
+    if (data.OK === false) {
+      alert(data.error || "No se pudo eliminar el producto");
+      return;
     }
-  } catch (e) {
-    console.error(e);
-    alert('Error de red al guardar producto');
+    await cargarProductos();
+  } catch {
+    alert("No se pudo eliminar el producto");
   }
-});
+}
 
-window.editarProducto = function(id, nombre, descripcion, precio, stock) {
-  inputId.value = id;
-  inputNombre.value = nombre;
-  inputDescripcion.value = descripcion;
-  inputPrecio.value = precio;
-  inputStock.value = stock;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-window.eliminarProducto = async function(id) {
-  if (!confirm('¿Eliminar este producto?')) return;
-
-  try {
-    const res = await fetch('/api/admin_productos.php?action=delete', {
-      method: 'POST',
-      body: new URLSearchParams({ id })
-    });
-    const data = await res.json();
-
-    if (data.OK) {
-      alert('Producto eliminado correctamente');
-      cargarProductos();
-    } else {
-      alert('No se pudo eliminar el producto: ' + (data.error || ''));
-    }
-  } catch (e) {
-    console.error(e);
-    alert('Error de red al eliminar producto');
-  }
-};
-
-cargarTiendas();
-tbody.innerHTML = '<tr><td colspan="5">Seleccione una tienda.</td></tr>';
+function formatoCOP(valor) {
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0
+  }).format(valor);
+}

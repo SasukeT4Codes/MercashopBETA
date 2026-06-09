@@ -9,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
   <link href="css/style.css" rel="stylesheet"/>
+  <link href="css/responsive.css" rel="stylesheet"/>
 </head>
 <body class="ms-login-body">
 
@@ -22,7 +23,6 @@
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-12 col-sm-9 col-md-7 col-lg-5 col-xl-4">
-
         <div class="card border-0 shadow-sm p-4 p-md-5">
           <div class="text-center mb-4">
             <p class="ms-brand fs-4 mb-1">MercaShop</p>
@@ -30,7 +30,6 @@
             <p class="text-muted small">Inicia sesión para continuar</p>
           </div>
 
-          <!-- TABS -->
           <ul class="nav nav-pills nav-fill mb-4 ms-tabs" id="auth-tabs">
             <li class="nav-item">
               <button class="nav-link active" data-tab="login">Iniciar sesión</button>
@@ -40,7 +39,6 @@
             </li>
           </ul>
 
-          <!-- LOGIN -->
           <div id="form-login">
             <div class="mb-3">
               <label class="form-label small fw-500">Correo electrónico</label>
@@ -78,7 +76,6 @@
             </p>
           </div>
 
-          <!-- REGISTRO -->
           <div id="form-registro" class="d-none">
             <div class="row g-2 mb-3">
               <div class="col">
@@ -111,7 +108,7 @@
                 <input type="password" id="reg-pass2" class="form-control border-start-0 ps-0" placeholder="Repite tu contraseña"/>
               </div>
             </div>
-            <div id="reg-error"   class="alert alert-danger  small d-none"></div>
+            <div id="reg-error" class="alert alert-danger small d-none"></div>
             <div id="reg-success" class="alert alert-success small d-none"></div>
             <div class="d-grid mb-3">
               <button class="btn btn-dark btn-lg" id="btn-registro">
@@ -124,22 +121,6 @@
             </p>
           </div>
         </div>
-
-        <div class="text-center mt-4">
-          <p class="text-muted small mb-3">— o continúa con —</p>
-          <div class="d-flex justify-content-center gap-3">
-            <button class="btn btn-outline-secondary rounded-circle" style="width:44px;height:44px" title="Google">
-              <i class="bi bi-google"></i>
-            </button>
-            <button class="btn btn-outline-secondary rounded-circle" style="width:44px;height:44px" title="Facebook">
-              <i class="bi bi-facebook"></i>
-            </button>
-            <button class="btn btn-outline-secondary rounded-circle" style="width:44px;height:44px" title="Apple">
-              <i class="bi bi-apple"></i>
-            </button>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
@@ -154,62 +135,89 @@ document.querySelectorAll('#auth-tabs .nav-link').forEach(btn => {
     document.querySelectorAll('#auth-tabs .nav-link').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const tab = btn.dataset.tab;
-    document.getElementById('form-login').classList.toggle('d-none',    tab !== 'login');
+    document.getElementById('form-login').classList.toggle('d-none', tab !== 'login');
     document.getElementById('form-registro').classList.toggle('d-none', tab !== 'registro');
   });
 });
 
 document.getElementById('link-a-registro').addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-tab="registro"]').click(); });
-document.getElementById('link-a-login').addEventListener('click',    e => { e.preventDefault(); document.querySelector('[data-tab="login"]').click(); });
+document.getElementById('link-a-login').addEventListener('click', e => { e.preventDefault(); document.querySelector('[data-tab="login"]').click(); });
 
 document.getElementById('toggle-pass').addEventListener('click', () => {
   const input = document.getElementById('login-pass');
-  const icon  = document.getElementById('pass-icon');
-  input.type  = input.type === 'password' ? 'text' : 'password';
-  icon.classList.toggle('bi-eye'); icon.classList.toggle('bi-eye-slash');
+  const icon = document.getElementById('pass-icon');
+  input.type = input.type === 'password' ? 'text' : 'password';
+  icon.classList.toggle('bi-eye');
+  icon.classList.toggle('bi-eye-slash');
 });
 
 document.getElementById('btn-login').addEventListener('click', async () => {
   const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
+  const pass = document.getElementById('login-pass').value;
   const errEl = document.getElementById('login-error');
   errEl.classList.add('d-none');
   if (!email || !pass) { mostrarError(errEl, 'Completa todos los campos'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { mostrarError(errEl, 'Correo no válido'); return; }
   setLoading('login', true);
   try {
-    const resp = await fetch(AUTH_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ accion:'login', email, password:pass }) });
+    const resp = await fetch(AUTH_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accion: 'login', email, password: pass })
+    });
     const data = await resp.json();
-    if (data.ok || data.success) { localStorage.setItem('ms_user', JSON.stringify(data.usuario || { email })); window.location.href = 'index.html'; }
-    else mostrarError(errEl, data.mensaje || 'Credenciales incorrectas');
+    if (data.ok || data.success) {
+      localStorage.setItem('ms_user', JSON.stringify(data.usuario || { email }));
+      window.location.href = 'index.html';
+    } else {
+      mostrarError(errEl, data.mensaje || 'Credenciales incorrectas');
+    }
   } catch {
-    if (pass.length >= 4) { localStorage.setItem('ms_user', JSON.stringify({ email, nombre:'Usuario Demo' })); window.location.href = 'index.html'; }
-    else mostrarError(errEl, 'Credenciales incorrectas');
-  } finally { setLoading('login', false); }
+    if (pass.length >= 4) {
+      localStorage.setItem('ms_user', JSON.stringify({ email, nombre: 'Usuario Demo' }));
+      window.location.href = 'index.html';
+    } else {
+      mostrarError(errEl, 'Credenciales incorrectas');
+    }
+  } finally {
+    setLoading('login', false);
+  }
 });
 
 document.getElementById('btn-registro').addEventListener('click', async () => {
   const nombre = document.getElementById('reg-nombre').value.trim();
-  const email  = document.getElementById('reg-email').value.trim();
-  const pass   = document.getElementById('reg-pass').value;
-  const pass2  = document.getElementById('reg-pass2').value;
-  const errEl  = document.getElementById('reg-error');
-  const okEl   = document.getElementById('reg-success');
-  errEl.classList.add('d-none'); okEl.classList.add('d-none');
+  const email = document.getElementById('reg-email').value.trim();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const errEl = document.getElementById('reg-error');
+  const okEl = document.getElementById('reg-success');
+  errEl.classList.add('d-none');
+  okEl.classList.add('d-none');
   if (!nombre || !email || !pass || !pass2) { mostrarError(errEl, 'Completa todos los campos'); return; }
-  if (pass.length < 8)  { mostrarError(errEl, 'La contraseña debe tener al menos 8 caracteres'); return; }
-  if (pass !== pass2)   { mostrarError(errEl, 'Las contraseñas no coinciden'); return; }
+  if (pass.length < 8) { mostrarError(errEl, 'La contraseña debe tener al menos 8 caracteres'); return; }
+  if (pass !== pass2) { mostrarError(errEl, 'Las contraseñas no coinciden'); return; }
   setLoading('reg', true);
   try {
-    const resp = await fetch(AUTH_API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ accion:'registro', nombre, email, password:pass }) });
+    const resp = await fetch(AUTH_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ accion: 'registro', nombre, email, password: pass })
+    });
     const data = await resp.json();
-    if (data.ok || data.success) { okEl.textContent = '¡Cuenta creada! Ahora puedes iniciar sesión.'; okEl.classList.remove('d-none'); setTimeout(() => document.querySelector('[data-tab="login"]').click(), 2000); }
-    else mostrarError(errEl, data.mensaje || 'Error al crear la cuenta');
+    if (data.ok || data.success) {
+      okEl.textContent = '¡Cuenta creada! Ahora puedes iniciar sesión.';
+      okEl.classList.remove('d-none');
+      setTimeout(() => document.querySelector('[data-tab="login"]').click(), 2000);
+    } else {
+      mostrarError(errEl, data.mensaje || 'Error al crear la cuenta');
+    }
   } catch {
     okEl.textContent = '¡Cuenta creada exitosamente! (modo demo)';
     okEl.classList.remove('d-none');
     setTimeout(() => document.querySelector('[data-tab="login"]').click(), 2000);
-  } finally { setLoading('reg', false); }
+  } finally {
+    setLoading('reg', false);
+  }
 });
 
 function mostrarError(el, msg) { el.textContent = msg; el.classList.remove('d-none'); }
