@@ -1,31 +1,128 @@
+
 :root {
-  --color-acento: #e0a800; /* Mostaza */
-  --color-promocion: #dc3545; /* Rojo Bootstrap */
+  --ms-dark:    #1e1e1e;
+  --ms-gray:    #2e2e2e;
+  --ms-light:   #f8f7f5;
+  --ms-muted:   #888;
+  --ms-accent:  #c8a96e;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans:  'DM Sans', sans-serif;
 }
-
+ 
+*, *::before, *::after { box-sizing: border-box; }
+ 
 body {
-  background-color: #f8f9fa;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-sans);
+  background-color: var(--ms-light);
+  color: var(--ms-dark);
 }
-
-.banner-promocion {
-  background-color: var(--color-promocion);
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-  margin-bottom: 20px;
+ 
+/* ——— Tipografía ——— */
+.ms-title      { font-family: var(--font-serif); font-weight: 600; }
+.ms-brand      { font-family: var(--font-serif); font-size: 1.4rem; letter-spacing: .04em; }
+.ms-product-name { font-family: var(--font-serif); font-size: .95rem; font-weight: 400; }
+.letter-wide   { letter-spacing: .12em; }
+.fw-500        { font-weight: 500; }
+ 
+/* ——— Navbar ——— */
+.ms-navbar {
+  background-color: var(--ms-dark) !important;
+  padding: .9rem 0;
 }
-
-.banner-promocion h2 {
-  font-weight: bold;
-}
-
-.banner-promocion .btn {
+.ms-navbar .ms-brand { color: #fff !important; }
+ 
+/* ——— Hero ——— */
+.ms-hero {
   background-color: #fff;
-  color: var(--color-promocion);
-  font-weight: 600;
+  border-bottom: 1px solid #eee;
 }
-
-.producto-card {
-  margin-bottom: 20px;
+ 
+/* ——— Filtros sticky ——— */
+.sticky-filters {
+  top: 66px;
+  z-index: 900;
 }
+.sticky-filters .form-select,
+.sticky-filters .form-control {
+  border-color: #ddd;
+  font-size: .875rem;
+}
+ 
+/* ——— Tarjeta de producto ——— */
+.ms-card {
+  background: #fff;
+  transition: transform .25s ease, box-shadow .25s ease;
+  animation: fadeUp .4s ease both;
+}
+.ms-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.09) !important;
+}
+ 
+.ms-card-img-wrap { background: #f5f4f2; }
+.ms-card-img {
+  height: 260px;
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+.ms-card:hover .ms-card-img { transform: scale(1.03); }
+ 
+/* Botón "agregar" aparece al hover */
+.ms-btn-agregar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .25s ease, transform .25s ease;
+  border-radius: 0;
+  font-size: .8rem;
+  letter-spacing: .08em;
+  padding: .6rem;
+}
+.ms-card-img-wrap:hover .ms-btn-agregar {
+  opacity: 1;
+  transform: translateY(0);
+}
+ 
+/* ——— Detalle de producto ——— */
+.ms-detalle-img-wrap {
+  height: 520px;
+  background: #f5f4f2;
+}
+@media (max-width: 767px) {
+  .ms-detalle-img-wrap { height: 320px; }
+}
+ 
+/* ——— Carrito ——— */
+.ms-success-icon { font-size: 4rem; }
+ 
+/* ——— Login ——— */
+.ms-login-body { background-color: #f0eeeb; }
+.ms-tabs .nav-link {
+  color: var(--ms-muted);
+  background: transparent;
+  border-radius: .375rem;
+  font-size: .875rem;
+}
+.ms-tabs .nav-link.active {
+  background-color: var(--ms-dark);
+  color: #fff;
+}
+ 
+/* ——— Footer ——— */
+.ms-footer {
+  background-color: var(--ms-dark);
+  color: #fff;
+}
+.ms-footer .ms-brand { color: #fff; }
+ 
+/* ——— Animaciones ——— */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ——— Utilities ——— */
+.object-fit-cover { object-fit: cover; }
