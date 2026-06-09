@@ -1,5 +1,13 @@
 const tiendaSelect = document.getElementById('tiendaSelect');
+const ordenSelect = document.getElementById('ordenSelect');
 const tbody = document.querySelector('#tablaCompras tbody');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const pageInfo = document.getElementById('page-info');
+
+let paginaActual = 1;
+const filasPorPagina = 20;
+let orden = "fecha";
 
 function formatearCOP(valor) {
   return 'COP ' + new Intl.NumberFormat('es-CO', {
@@ -18,7 +26,7 @@ async function cargarTiendas() {
     const res = await fetch('/api/admin_tiendas.php?action=list');
     const data = await res.json();
 
-    tiendaSelect.innerHTML = '<option value="">Seleccione una tienda...</option>';
+    tiendaSelect.innerHTML = '<option value="">Todas las tiendas</option>';
 
     if (data.OK) {
       data.data.forEach(tienda => {
@@ -38,14 +46,11 @@ async function cargarTiendas() {
 
 async function cargarCompras() {
   const tiendaId = tiendaSelect.value;
-
-  if (!tiendaId) {
-    tbody.innerHTML = '<tr><td colspan="7">Seleccione una tienda.</td></tr>';
-    return;
-  }
+  let url = `/api/admin_compras.php?action=list&page=${paginaActual}&limit=${filasPorPagina}&orden=${orden}`;
+  if (tiendaId) url += `&tienda=${tiendaId}`;
 
   try {
-    const res = await fetch(`/api/admin_compras.php?action=list&tienda=${tiendaId}`);
+    const res = await fetch(url);
     const data = await res.json();
 
     tbody.innerHTML = '';
@@ -64,10 +69,12 @@ async function cargarCompras() {
         `;
         tbody.appendChild(tr);
       });
-    } else if (data.OK) {
-      tbody.innerHTML = '<tr><td colspan="7">No hay compras registradas para esta tienda.</td></tr>';
+
+      // Mostrar página actual y total
+      pageInfo.textContent = `Página ${data.page} de ${data.totalPages} (Total: ${data.totalRecords})`;
     } else {
-      alert('Error al cargar compras: ' + (data.error || ''));
+      tbody.innerHTML = '<tr><td colspan="7">No hay compras registradas.</td></tr>';
+      pageInfo.textContent = '';
     }
   } catch (e) {
     console.error(e);
@@ -75,6 +82,28 @@ async function cargarCompras() {
   }
 }
 
-tiendaSelect.addEventListener('change', cargarCompras);
+tiendaSelect.addEventListener('change', () => {
+  paginaActual = 1;
+  cargarCompras();
+});
+
+ordenSelect.addEventListener('change', e => {
+  orden = e.target.value;
+  paginaActual = 1;
+  cargarCompras();
+});
+
+btnPrev.addEventListener('click', () => {
+  if (paginaActual > 1) {
+    paginaActual--;
+    cargarCompras();
+  }
+});
+
+btnNext.addEventListener('click', () => {
+  paginaActual++;
+  cargarCompras();
+});
 
 cargarTiendas();
+cargarCompras();
