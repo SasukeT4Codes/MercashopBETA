@@ -61,12 +61,12 @@ switch ($action) {
 
     case 'add':
         $tiendaId = $_POST['tienda_id'] ?? 0;
-        $nombre = $_POST['nombre'] ?? '';
-        $desc = $_POST['descripcion'] ?? '';
-        $precio = $_POST['precio'] ?? 0;
-        $stock = $_POST['stock'] ?? 0;
+        $nombre   = $_POST['nombre'] ?? '';
+        $desc     = $_POST['descripcion'] ?? '';
+        $precio   = floatval($_POST['precio'] ?? 0);
+        $stock    = intval($_POST['stock'] ?? 0);
 
-        if (!$tiendaId || $nombre === '' || $precio === '') {
+        if (!$tiendaId || $nombre === '' || $precio <= 0) {
             echo json_encode(["OK" => false, "error" => "Tienda, nombre y precio son obligatorios"]);
             break;
         }
@@ -78,27 +78,23 @@ switch ($action) {
         }
 
         $sql = "INSERT INTO TProductos
-                (nTiendaFK, cDescripcionCorta, cDescripcionLarga, cUrlImagenPrincipal, nCategoriaFK, jEspecificaciones, nPrecioUnitario, nCantidadStock)
-                VALUES (?, ?, ?, ?, NULL, NULL, ?, ?)";
+                (nTiendaFK, cDescripcionCorta, cDescripcionLarga, cUrlImagenPrincipal, nPrecioUnitario, nCantidadStock)
+                VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $img = $imagen ?: '';
         $stmt->bind_param("isssdi", $tiendaId, $nombre, $desc, $img, $precio, $stock);
         $ok = $stmt->execute();
 
-        if ($ok) {
-            echo json_encode(["OK" => true]);
-        } else {
-            echo json_encode(["OK" => false, "error" => $stmt->error]);
-        }
+        echo json_encode(["OK" => $ok, "error" => $ok ? null : $stmt->error]);
         $stmt->close();
         break;
 
     case 'update':
-        $id = $_POST['id'] ?? 0;
+        $id     = $_POST['id'] ?? 0;
         $nombre = $_POST['nombre'] ?? '';
-        $desc = $_POST['descripcion'] ?? '';
-        $precio = $_POST['precio'] ?? 0;
-        $stock = $_POST['stock'] ?? 0;
+        $desc   = $_POST['descripcion'] ?? '';
+        $precio = floatval($_POST['precio'] ?? 0);
+        $stock  = intval($_POST['stock'] ?? 0);
 
         if (!$id) {
             echo json_encode(["OK" => false, "error" => "ID de producto requerido"]);
@@ -126,11 +122,7 @@ switch ($action) {
         }
 
         $ok = $stmt->execute();
-        if ($ok) {
-            echo json_encode(["OK" => true]);
-        } else {
-            echo json_encode(["OK" => false, "error" => $stmt->error]);
-        }
+        echo json_encode(["OK" => $ok, "error" => $ok ? null : $stmt->error]);
         $stmt->close();
         break;
 
@@ -145,11 +137,7 @@ switch ($action) {
         $stmt->bind_param("i", $id);
         $ok = $stmt->execute();
 
-        if ($ok) {
-            echo json_encode(["OK" => true]);
-        } else {
-            echo json_encode(["OK" => false, "error" => $stmt->error]);
-        }
+        echo json_encode(["OK" => $ok, "error" => $ok ? null : $stmt->error]);
         $stmt->close();
         break;
 

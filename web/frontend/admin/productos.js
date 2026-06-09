@@ -134,7 +134,7 @@ async function cargarProductos() {
     });
 
     tbody.querySelectorAll("button[data-action='editar']").forEach(btn => {
-      btn.addEventListener("click", () => iniciarEdicion(btn.dataset.id));
+      btn.addEventListener("click", () => iniciarEdicion(btn.dataset.id, lista));
     });
 
     tbody.querySelectorAll("button[data-action='eliminar']").forEach(btn => {
@@ -177,9 +177,27 @@ async function guardarProducto(e) {
   }
 }
 
-function iniciarEdicion(id) {
+function iniciarEdicion(id, lista) {
   editandoId = id;
-  document.getElementById("producto-id").value = id;
+  const producto = lista.find(p => String(p.nProductoID) === String(id));
+  if (!producto) return;
+
+  document.getElementById("producto-id").value = producto.nProductoID;
+  document.getElementById("nombre").value = producto.cDescripcionCorta || "";
+  document.getElementById("descripcion").value = producto.cDescripcionLarga || "";
+  document.getElementById("precio").value = producto.nPrecioUnitario || 0;
+  document.getElementById("stock").value = producto.nCantidadStock || 0;
+
+  if (producto.cUrlImagenPrincipal) {
+    const img = document.getElementById("previewImagen");
+    img.src = producto.cUrlImagenPrincipal;
+    img.classList.remove("d-none");
+    document.getElementById("previewPlaceholder").classList.add("d-none");
+  } else {
+    document.getElementById("previewImagen").classList.add("d-none");
+    document.getElementById("previewPlaceholder").classList.remove("d-none");
+  }
+
   document.getElementById("btnCancelarEdicion").style.display = "inline-block";
 }
 
@@ -189,6 +207,8 @@ function cancelarEdicion() {
   document.getElementById("formProducto").reset();
   document.getElementById("btnCancelarEdicion").style.display = "none";
   document.getElementById("tienda_id").value = tiendaActual;
+  document.getElementById("previewImagen").classList.add("d-none");
+  document.getElementById("previewPlaceholder").classList.remove("d-none");
 }
 
 async function eliminarProducto(id) {
