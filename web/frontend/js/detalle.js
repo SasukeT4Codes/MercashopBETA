@@ -1,14 +1,17 @@
-// js/detalle.js
 const API_URL = "/api/productos.php";
 let producto = null;
+let toast = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  toast = bootstrap.Toast.getOrCreateInstance(document.getElementById("toast-carrito"));
   actualizarContador();
+
   const id = new URLSearchParams(location.search).get("id");
   if (!id) {
     mostrarError();
     return;
   }
+
   await cargarProducto(id);
 
   document.getElementById("btn-mas").addEventListener("click", () => cambiarCantidad(1));
@@ -20,7 +23,9 @@ async function cargarProducto(id) {
   try {
     const resp = await fetch(`${API_URL}?id=${id}`);
     const data = await resp.json();
+
     if (!data.OK || !data.data || data.data.length === 0) throw new Error();
+
     producto = data.data[0];
     renderProducto(producto);
   } catch {
@@ -50,7 +55,11 @@ function mostrarError() {
 }
 
 function formatoCOP(valor) {
-  return new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", minimumFractionDigits: 0 }).format(valor);
+  return new Intl.NumberFormat("es-CO", {
+    style: "currency",
+    currency: "COP",
+    minimumFractionDigits: 0
+  }).format(valor);
 }
 
 function cambiarCantidad(delta) {
@@ -63,9 +72,11 @@ function cambiarCantidad(delta) {
 
 function agregarAlCarrito() {
   if (!producto) return;
+
   const cantidad = parseInt(document.getElementById("cantidad-input").value);
   let carrito = JSON.parse(localStorage.getItem("ms_carrito") || "[]");
   const existente = carrito.find(i => i.id === producto.nProductoID);
+
   if (existente) {
     existente.cantidad += cantidad;
   } else {
@@ -77,11 +88,12 @@ function agregarAlCarrito() {
       cantidad
     });
   }
+
   localStorage.setItem("ms_carrito", JSON.stringify(carrito));
   actualizarContador();
 
   document.getElementById("toast-msg").textContent = `"${producto.cDescripcionCorta}" agregado al carrito`;
-  bootstrap.Toast.getOrCreateInstance(document.getElementById("toast-carrito")).show();
+  toast.show();
 }
 
 function actualizarContador() {

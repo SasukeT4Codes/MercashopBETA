@@ -1,0 +1,61 @@
+@media (max-width: 1199.98px) {
+  .ms-card-img { height: 230px; }
+}
+
+@media (max-width: 991.98px) {
+  .ms-page-main { min-height: auto; }
+  .sticky-filters { top: 60px; }
+
+  .ms-navbar .navbar-collapse {
+    background: linear-gradient(180deg, rgba(18,50,78,.98), rgba(31,95,156,.98));
+    margin-top: .75rem;
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+
+  .ms-nav-actions { margin-top: .75rem; }
+  .ms-card-img { height: 220px; }
+  .ms-detalle-img-wrap { height: 420px; }
+
+  .admin-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--ad-border);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .ms-title { font-size: calc(1.3rem + 1.5vw); }
+  .ms-card-img { height: 200px; }
+  .ms-btn-agregar {
+    opacity: 1;
+    transform: translateY(0);
+    position: static;
+  }
+  .sticky-filters { top: 56px; }
+  .ms-detalle-img-wrap { height: 320px; }
+
+  .input-group .btn,
+  .input-group .form-control,
+  .input-group .form-select {
+    font-size: .95rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .ms-card-img { height: 180px; }
+  .ms-navbar .container { gap: .5rem; }
+  .ms-footer { text-align: center; }
+  .admin-title { font-size: 1.5rem; }
+  .admin-panel { padding: .85rem; }
+  .table-responsive { border-radius: 1rem; }
+}
+
+@media (min-width: 1400px) {
+  .container { max-width: 1280px; }
+  .ms-card-img { height: 280px; }
+}
