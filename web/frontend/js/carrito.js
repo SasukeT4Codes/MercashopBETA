@@ -104,11 +104,47 @@ function mostrarCheckout() {
   bootstrap.Modal.getOrCreateInstance(document.getElementById("modal-checkout")).show();
 }
 
-function finalizarCompra() {
-  localStorage.removeItem("ms_carrito");
-  renderCarrito();
-  const msg = document.getElementById("checkout-msg");
-  if (msg) msg.classList.remove("d-none");
+async function finalizarCompra() {
+  const usuario = JSON.parse(localStorage.getItem("ms_user") || "null");
+  if (!usuario) {
+    alert("Debes iniciar sesión para comprar");
+    return;
+  }
+
+  const carrito = getCarrito();
+  const subtotal = calcularSubtotal();
+  const total = subtotal * (1 - descuentoPct / 100);
+
+  try {
+    const resp = await fetch("/api/pedido.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        clienteID: usuario.id,
+        carrito,
+        subtotal,
+        total
+      })
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      localStorage.removeItem("ms_carrito");
+      renderCarrito();
+
+      // Cerrar modal después de confirmar
+      const modalEl = document.getElementById("modal-checkout");
+      const modal = bootstrap.Modal.getInstance(modalEl);
+      if (modal) modal.hide();
+
+      const msg = document.getElementById("checkout-msg");
+      if (msg) msg.classList.remove("d-none");
+      alert("Pedido confirmado #" + data.pedidoID);
+    } else {
+      alert("Error: " + data.mensaje);
+    }
+  } catch {
+    alert("Error de conexión con el servidor");
+  }
 }
 
 function formatoCOP(valor) {

@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(html => {
       document.getElementById("navbar").innerHTML = html;
       actualizarContador();
+      mostrarUsuario();
     });
 });
 
@@ -16,5 +17,14 @@ function actualizarContador() {
   if (el) {
     el.textContent = total;
     el.style.display = total === 0 ? "none" : "inline";
+  }
+}
+
+function mostrarUsuario() {
+  const user = localStorage.getItem("ms_user");
+  if (user) {
+    const u = JSON.parse(user);
+    const el = document.getElementById("nav-user");
+    if (el) el.textContent = u.nombre + " " + u.apellido;
   }
 }

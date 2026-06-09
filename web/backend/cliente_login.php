@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'db.php'; // aquí tienes tu conexión $pdo
+require 'db.php'; // aquí tienes tu conexión $conn
 header('Content-Type: application/json');
 
 $input = json_decode(file_get_contents("php://input"), true);
@@ -15,10 +15,12 @@ if ($accion === 'login') {
         exit;
     }
 
-    $stmt = $pdo->prepare("SELECT nUsuarioClienteID, cNombre, cApellido, cContrasena 
-                           FROM TUsuarioCliente WHERE cCorreo = ?");
-    $stmt->execute([$correo]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT nUsuarioClienteID, cNombre, cApellido, cContrasena 
+                            FROM TUsuarioCliente WHERE cCorreo = ?");
+    $stmt->bind_param("s", $correo);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
 
     if ($user && password_verify($pass, $user['cContrasena'])) {
         $_SESSION['cliente_id'] = $user['nUsuarioClienteID'];
@@ -53,13 +55,15 @@ elseif ($accion === 'registro') {
 
     try {
         // 1. Insertar dirección
-        $stmt = $pdo->prepare("INSERT INTO TDireccion (cNomenclatura, cBarrio, cCodigoPostal, nMunicipioFK) VALUES (?,?,?,?)");
-        $stmt->execute([$nomenclatura, $barrio, $codpostal, $municipio]);
-        $direccionID = $pdo->lastInsertId();
+        $stmt = $conn->prepare("INSERT INTO TDireccion (cNomenclatura, cBarrio, cCodigoPostal, nMunicipioFK) VALUES (?,?,?,?)");
+        $stmt->bind_param("sssi", $nomenclatura, $barrio, $codpostal, $municipio);
+        $stmt->execute();
+        $direccionID = $conn->insert_id;
 
         // 2. Insertar usuario con FK a dirección
-        $stmt2 = $pdo->prepare("INSERT INTO TUsuarioCliente (cNombre, cApellido, cContrasena, cCorreo, nDireccionFK) VALUES (?,?,?,?,?)");
-        $stmt2->execute([$nombre, $apellido, $pass, $correo, $direccionID]);
+        $stmt2 = $conn->prepare("INSERT INTO TUsuarioCliente (cNombre, cApellido, cContrasena, cCorreo, nDireccionFK) VALUES (?,?,?,?,?)");
+        $stmt2->bind_param("ssssi", $nombre, $apellido, $pass, $correo, $direccionID);
+        $stmt2->execute();
 
         echo json_encode(["ok" => true]);
     } catch (Exception $e) {
